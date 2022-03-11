@@ -7,10 +7,11 @@
 }
 
 body {
-    background-color: lightcoral;
+    background-color: aquamarine;
 }
 
 /* UTILITIES */
+
 .container {
     max-width: 1170px;
     margin: 0 auto;
@@ -25,7 +26,7 @@ body {
 }
 
 .align-center {
-    align-items: center;
+      align-items: center;
 }
 
 .text-center {
@@ -33,6 +34,7 @@ body {
 }
 
 /* HEADER */
+
 header {
     margin-bottom: 3rem;
     padding: 1rem;
@@ -51,7 +53,7 @@ header {
 
 .toolbar select {
     width: 150px;
-    margin: 0 .5rem;
+    margin: 0 .5rem; 
 }
 
 .toolbar button {
@@ -59,7 +61,6 @@ header {
 }
 
 /* GRID */
-
 .grid {
     display: flex;
     flex-wrap: wrap;
@@ -70,14 +71,16 @@ header {
 }
 
 .square {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /*width: calc(100% / 10);
-    height: calc(100% / 10);*/
-    border: 1px solid #000;
-    cursor: pointer;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   /* width: calc(100% / 10);
+   height: calc(100% / 10); */ 
+   border: 1px solid #000;
+   cursor: pointer;
 }
 
 .square.clicked {
-    background: blue;
+    color: #fff;
+    background: #6495ed;
+}
