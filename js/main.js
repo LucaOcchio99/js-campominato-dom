@@ -1,81 +1,202 @@
 /**
- * Campo minato: griglia
+ * Campo minato: logica
  * 
- * L'utente indica un livello di difficoltà in base al quale viene
- * generata una griglia di gioco quadrata, in cui ogni cella 
- * contiene 
- * un numero tra quelli compresi in un range:
- * con difficoltà 1 => tra 1 e 100, 
- * con difficoltà 2 => tra 1 e 81,
- * con difficoltà 3 => tra 1 e 49
+ * Il computer deve generare 16 numeri casuali nello stesso range
+ * della difficoltà prescelta: le bombe
+ * I numeri nella lista delle bombe non possono essere duplication
  * 
- * Quando l'utente clicca su ogni cella. la cella cliccata si 
- * colora di azzurro.
+ * In seguito l'utente clicca su ogni cella: se il numero è presente nella
+ * lista dei numeri generati - abbiamo calpestato una bomba - la cella si colora 
+ * di rosso e la partita termina, altrimenti la cella cliccata si colora di azzurro e
+ * l'utente può continuare a cliccare sulle altre celle.
+ * 
+ * La partita termina quando il giocatore clicca su una bomba o raggiunge 
+ * il numero massimo possibile di numeri consentiti.
+ * 
+ * Al termine della partita il software deve scoprire tutte le bombe e 
+ * comunicare il punteggio, cioè il numero di volte che l'utente ha inserito un 
+ * numero consentito. 
  */
 // Refs
-const playBtn = document.getElementById('play');
-const levels = document.getElementById('levels');
-const wrap = document.querySelector('.wrap-grid');
+const btn = document.getElementById('play-btn');
+const dimDifficoltà = document.getElementById('dimensions');
+const wrapGrid = document.getElementById('wrap-grid');
 
-//Inizio della partita
-playBtn.addEventListener('click', () => {
-    //reset wrap GRID
-    wrapGrid.innerHTML = '';
 
-    //set dimension grid in base alla difficoltà
-    let cellsNumber;
-    let cellsPerSide;
+//set grid
+btn.addEventListener('click', function()  {
 
-    switch (levels.value) {
+    //creo dimensioni gridù
+    const dimGrid = dimDifficoltà.value;
+    let numCells;
+    let sideCell;
+
+
+    //grandezze per difficoltà
+    switch(dimGrid) {
         case '1':
-         cellsNumber = 100;
-         cellsPerSide = 10;
-        break;
+            numCells = 100;
+            sideCell = 10;
+           break;
         case '2':
-          cellsNumber = 81;
-          cellsPerSide = 9;
-          break;
-          case '3':
-            cellsNumber = 49;
-            cellsPerSide = 7;
+            numCells = 81;
+            sideCell = 9;
+           break;
+        case '3':
+            numCells = 49;
+            sideCell = 7;
     }
-    
 
-    //gen grid
+
+
+    //creo bombe
+    const listBombs = genBombe(numCells, 16);
+    console.log(listBombs);
+
+    //numero tentativi
+    const tentativi = [];
+    const maxTentativi = numCells - listBombs.length;
+    console.log('maxtent', maxTentativi);
+
+
+
+    //creo griglia
     const grid = document.createElement('div');
     grid.classList.add('grid');
 
-    // gen squares, tante quante cellsNumber
-    for (let i = 1; i <= cellsNumber; i++) { 
-       //gen singola square (function)
-    const square = createGridSquare(i, cellsPerSide)
-      
-        //click square;
-        square.addEventListener('click', () => {
-            square.classList.add('clicked');
-        });
-       //aggiunta di square a grid
-       grid.append(square);
-    }
-    //inserire grid in wrap 
+    //inserisco griglia
     wrapGrid.append(grid);
+
+
+    //creo quadrati
+    for (let i = 1; i <= numCells ; i++ ) {
+        const square = genSquare( [i] , sideCell);
+
+        //square cliccabili
+        square.addEventListener('click', function(){
+
+            sqaureClick(square, listBombs, tentativi, maxTentativi);
+
+        });
+
+        grid.append(square);
+
+    }
+
+
 });
 
+
+
+// FUNCTION------
+
+
 /**
- * Gen square
+ * creo square
  */
+function genSquare (num , cells) {
+    const quad = document.createElement('div');
+    quad.classList.add('square');
+    quad.innerHTML = num;
+    //dimensioni
+    quad.style.width = `calc(100% / ${cells})`;
+    quad.style.height = `calc(100% / ${cells})`;
+    return quad;
+}
 
-function createGridSquare(num, cells) {
- // Creazione nodo 
- const nodo = document.createElement('div');
 
- // add class e dimensioni 
- nodo.classList.add('square');
- nodo.style.width = `calc(100% / ${cells})`;
- nodo.style.height = `calc(100% / ${cells})`;
+/**
+ * creazione bombe
+ */
+function genBombe(totCells, totBombs) {
+    const bombs = [];
 
- // inserire numero dentro nodo
-nodo.append(num);
- // ritornare il nodo
- return nodo;
+    while(bombs.length < totBombs) {
+        //numeri random
+        const bomb = genNumRand(1, totCells);
+
+        //numero generato deve essere univoco
+        if(!bombs.includes(bomb)) {
+            bombs.push(bomb);
+        }
+    }
+    return bombs;
+}
+
+
+
+/**
+ * numeri random
+ */
+function genNumRand(min, max) {
+    return Math.floor(Math.random()*(max - min + 1)) + min;
+}
+
+
+/**
+ * click sui quadrati
+ */
+function sqaureClick(square, listBombs, tentativi, maxTentativi) {
+    //capire che numero l'utente ha selezionato dalla tabella
+    const num = parseInt(square.innerHTML);
+    console.log('numero selezionato', num)
+    
+    //capire se il numero selezionato fa parte dell'array delle bombe
+    //controllare che non sia numero gia selezionato
+    if(listBombs.includes(num)) {
+        console.log('questa è una bomba');
+        //azioni dopo aver schiacciato una bomba
+        clickbomb(listBombs, tentativi, maxTentativi);
+    }
+    else if (!tentativi.includes(num)){
+        //cambio il colore perche è una bomba
+        square.classList.add('notbomb')
+
+        //aggiungere numero alla lista tentativi 
+        tentativi.push(num);
+
+        //controllo se numeri tentativi attuali è uguale a numero massimo tentativi 
+        if(tentativi.length === maxTentativi) {
+            console.log('hai vinto');
+
+            const messageEl = document.createElement('div');
+            let message = 'Hai vinto :)';
+            messageEl.classList.add('message');//stilo questa classse in css
+            messageEl.append(message);
+            document.getElementById('wrap-grid').append(messageEl);
+        }
+    }
+}
+
+
+
+/**
+ * se si clicca la bomba
+ */
+function clickbomb(listBombs, tentativi, maxTentativi) {
+    //tutti i quadrati
+    const squares = document.querySelectorAll('.square');
+
+    //dopo aver cliccato una bomba pure le altre si mostrano
+    for(let i=0; i< squares.length; i++) {
+        const square = squares[i];
+        const squareValue = parseInt(square.innerHTML);
+
+        if(listBombs.includes(squareValue)) {
+            square.classList.add('bomb');
+        }
+    }
+
+    let message = 'Hai vinto';
+
+    if(tentativi.length < maxTentativi ) {
+        message = `Peccato, Hai perso, Hai azzeccato ${tentativi.length} tentativi. Gioca ancora!...`;
+    }
+
+    //inserire messaggio nel dom
+    const messageEl = document.createElement('div');
+    messageEl.classList.add('message');//stilo questa classse in css
+    messageEl.append(message);
+    document.getElementById('wrap-grid').append(messageEl);
+
 }

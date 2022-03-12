@@ -4,41 +4,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
     <link rel="stylesheet" href="./css/style.css">
+    <title>Document</title>
 </head>
 <body>
-    <!-- HEADER --->
-    <header>
-        <div class="container d-flex justify-between align-center">
-            <div class="brand">
-                <img src="./Pittogramma-RGB-1080-BLUE-circle.png" alt="Campo Minato">
-                Campo minato
-            </div>
 
-            <div class="toolbar d-flex align-center">
-                <label for="levels">Difficoltà</label>
-                <select id="levels">
-                    <option value="1">Easy</option>
-                    <option value="2">Medium</option>
-                    <option value="3">Hard</option>
-                </select>
-                <button id="play">Play</button>
-            </div>
-        </div>
+    <header>
+        <!-- left -->
+        <section class="left-side">
+            <img src="./logo.png" alt="">
+            <h1>Campo Minato: la Griglia</h1>
+        </section>
+        <!-- right -->
+        <section class="right-side">
+            <label for="dimensions">Difficoltà: </label>
+            <select id="dimensions">
+                <option value="1"> Easy </option>
+                <option value="2"> Medium </option>
+                <option value="3"> Hard </option>
+            </select>
+            <button id="play-btn">Play</button>
+        </section>
     </header>
 
-    <!-- MAIN -->
-   <main class="container wrap-grid">
-       <h2 class="text-center">Seleziona il livello di difficoltà e premi Play</h2>
-       <div class="grid">
-        <!--   <div class="square"></div>
-           <div class="square"></div>
-           <div class="square"></div>
-           <div class="square"></div>
-       </div> -->
-    </main>
-    <!-- JS -->
+    <!-- main -->
+    <main id="wrap-grid"></main>
+
+    <!-- footer -->
+    <footer>
+        Maid with &hearts; by
+        <a href="/">Boolean</a>
+    </footer>
+
+
+
+
+
+
+
+    <!-- js -->
     <script src="./js/main.js"></script>
 </body>
 </html>
